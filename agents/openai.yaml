@@ -1,0 +1,4 @@
+interface:
+  display_name: "论文精读 · Zotero × Obsidian"
+  short_description: "将指定论文归档到 Zotero，通过 ZotLit 创建中文精读笔记并结合代码讲解"
+  default_prompt: "使用 $paper-reading-obsidian 收录并精读这篇论文，在我的 Obsidian 中生成有原文依据和代码注释的笔记。"
