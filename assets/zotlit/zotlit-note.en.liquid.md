@@ -3,21 +3,29 @@
 
 [Zotero]({{ zt.backlink }}){% if zt.url %} · [Paper]({{ zt.url }}){% endif %}
 
-## The paper in plain language
+# The paper in plain language
 
-## Prerequisites
+# Prerequisites
 
-## Problem setup and method overview
+# Method overview
 
-## Key designs and mechanisms
+## Problem setup and overall pipeline
+
+## Key components and mechanisms
+
+# Experiments
 
 ## Main experiments
 
 ## Ablations and analysis
 
-## Discussion, contributions and limitations
+# Discussion
 
-## At a glance
+# Appendix
+
+## Method and component lookup
+
+## Notation
 
 ## Version differences
 
@@ -25,4 +33,4 @@
 
 ## References and their roles
 
-## My thoughts
+# My thoughts

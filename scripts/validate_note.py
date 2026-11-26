@@ -157,7 +157,7 @@ def validate(note: Path, vault: Path | None = None, paper_folder: Path | None = 
             errors.append(f"Do not repeat the note name or title as a body heading at line {number}")
         if "§" in line:
             errors.append(f"Use ch for original chapter references at body line {number}")
-        if re.match(r"^#{2,6}\s+(?:\d+(?:\.\d+)*[.)、]?\s+|第[一二三四五六七八九十\d]+部分|Part\s+[IVX\d]+\b)", line, re.I):
+        if re.match(r"^#{1,6}\s+(?:\d+(?:\.\d+)*[.)、]?\s+|第[一二三四五六七八九十\d]+部分|Part\s+[IVX\d]+\b)", line, re.I):
             errors.append(f"Use direct unnumbered content headings at body line {number}")
         if re.search(r"\bch\s+[IVX\d][^\n]*(?:第\s*\d+\s*页|\b(?:pp?\.|pages?)\s*\d+)", line, re.I):
             errors.append(f"Do not append page numbers to chapter references at body line {number}")

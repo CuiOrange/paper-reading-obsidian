@@ -16,22 +16,43 @@ The callout is ordinary visible Markdown; do not wrap it in HTML comments or Zot
 
 ## Outline
 
-### Part I: understanding the paper — always in the main note
+### Main-note hierarchy
 
-For experiment-driven papers (methods, systems and benchmarks):
+After the TL;DR and single source line, use exactly seven unnumbered H1 groups in the order below. Section wording may fit the actual paper, but the nesting must remain. Do not repeat the note title or add a “Part I” wrapper. The numbering in this instruction is a planning aid only, never heading text in a note.
 
-1. **The whole paper in plain language:** roughly one to two pages of coherent prose covering the concrete problem, prior gap, core idea, main results, decisive experimental observations, significance and limitations. No displayed formulas or derivations. Introduce only a few key quantities if necessary.
-2. **Necessary prerequisites (optional):** tools beyond a CS undergraduate background. For each, give intuition, the definition/properties needed here and its role. Omit this section if short local explanations suffice.
-3. **Problem setup and method overview:** task, inputs/outputs, assumptions and an overall pipeline diagram. Introduce notation as it appears.
-4. **Key designs:** one substantial design per section, in the order of the argument. Give precise original formulas/algorithms and numbering, explain mechanism and non-obvious conditions, and sketch long derivations. Place short annotated author-code excerpts at the step they clarify. Use descriptive headings, not a single undifferentiated method dump.
-5. **Main experiments:** settings needed to interpret the results, all main result tables retyped in full, original figures, and a concise explanation of which claims each experiment supports. These stay in the main note even when long; fold tables/figures when useful.
-6. **Ablations and analysis:** component effects, sensitivity and other substantive analyses, including negative results and qualifications.
-7. **Discussion:** relevant lines of related work; the authors' conclusions and stated limitations; separately attributed, evidence-based strengths, limitations and open questions. Add only verified, directly relevant follow-up work when useful. Leave user-owned thoughts to the user.
-8. **At a glance:** method component | role | formula/algorithm | note location, followed by a notation table. Tables only; introduce no new claims.
+1. **Plain-language explanation:** tell the problem, prior gap, core idea, results, decisive observations and significance in coherent prose. No displayed formulas or derivations. Motivation belongs here rather than a separate background chapter.
+2. **Prerequisites:** explain only specialist tools needed beyond a CS undergraduate background. If no separate tools are needed, give one concise statement of the assumed foundation, not a glossary or an empty placeholder.
+3. **Method overview:** use H2 subsections for **problem setup and overall pipeline**, then **each substantive component** in argument order. Introduce inputs/outputs, assumptions, notation and a useful pipeline diagram in setup. For each component, give exact formulas/algorithms, its role, non-obvious conditions, relevant annotated code and proof ideas. A theory paper uses main results/dependencies as the component subsections, with exact original result numbers and a plain-language meaning; full proofs can move to the optional detail note. Do not promote setup or individual components to separate H1 sections.
+4. **Experiments:** use H2 subsections for **main experiments** and **ablations/analysis**. Include settings needed to interpret the evidence, full main tables, original figures, what each experiment establishes, sensitivity and negative findings. Main results and substantive ablations stay here. If the paper has no experiments, state this fact briefly within this group; do not invent results or delete the group.
+5. **Discussion:** explain related-work differences, the authors' conclusions/limitations, and separately attributed evidence-based assessment and open questions. Verified relevant follow-up work is optional. Do not write the user's own opinions here.
+6. **Appendix:** one H1 `附录` in Chinese or `Appendix` in English. Use H2 subsections for method/component lookup, notation, version differences, errors/consistency checks and references with their roles. Keep lookup tables concise and introduce no new method claims. All these topics belong here, not in standalone top-level sections.
+7. **Personal thoughts:** the last H1 group, such as `思考` / `My thoughts`. Preserve existing user text and leave it unfilled otherwise. Do not invent first-person reflections.
 
-For theory papers, use: plain-language overview → optional prerequisites → problem setup → one section per main result in argument order → experiments when present → discussion → at-a-glance results and notation tables. Each main result has its exact statement, original number, one plain-language sentence on meaning, relevant conditions and proof idea. Add a result dependency diagram when it helps. Full proofs belong in Part II.
+All lower-level headings are unnumbered too. Keep original equation/theorem/algorithm/figure numbering; this is independent of note heading numbers. Avoid repeated statements/formulas and routine section summaries. The source title can be in properties, while chapter references use the existing `ch` convention.
 
-Do not add a separate generic background chapter. Motivation and contributions belong in the opening overview; prior methods needed for understanding belong in prerequisites/setup. Section titles describe their content. The outline list above specifies content responsibilities, not numbered headings: write them as unnumbered H2 content headings directly after the opening callout/source line, without a note-title wrapper, with unnumbered H3 subsections. “Part I/II” are planning labels only, never an extra title level in the delivered notes. Original numbered equations/results/figures retain their source identifiers. Avoid repeated motivation, repeated statements/formulas and routine end-of-section summaries. Use undergraduate knowledge directly.
+### Heading example
+
+```markdown
+# 不用公式讲解
+# 前置知识
+# 方法概述
+## 问题设定和总览
+## 组件一的实际名称
+## 组件二的实际名称
+# 实验
+## 主实验
+## 消融与分析
+# 讨论
+# 附录
+## 方法定位
+## 符号表
+## 版本差异
+## 错误与一致性检查
+## 参考文献及其作用
+# 思考
+```
+
+Replace component placeholders with the actual contributions; add or remove component subsections as needed. Retain all seven H1 groups and their responsibilities in the stated order, including for theory papers. Variants such as “实验评估” for experiments or “贡献与局限” for discussion are fine.
 
 ### Part II: complete proofs and details — optional separate note
 
@@ -39,17 +60,17 @@ Organize long derivations from the main text first, followed by proofs and deriv
 
 For experiment-driven papers, also include full hyperparameter tables, training and evaluation procedures, implementation details and supplementary experiments. Do not move the main results or substantive ablations out of Part I merely to shorten the main note. Short code that explains the mechanism stays in Part I; extended implementation context can go here.
 
-When Part II is substantial, use `附加笔记.md`; otherwise keep it after Part I in the main note, using collapsible callouts for long passages. Main-to-detail links should target the relevant heading/block; include a visible return link in the detail note. Separate-file placement is optional, coverage is not.
+When complete details are substantial, use `附加笔记.md` (English: `Details.md`); otherwise fold them beside the method argument they support, or put them as subsections of the appendix. Do not introduce another H1 group in the main note for “Part II” or complete details. Main-to-detail links should target the relevant heading/block; include a visible return link in the detail note. Separate-file placement is optional, coverage is not.
 
-### Explainer appendices — end of the main note
+### Appendix contents — one group before personal thoughts
 
-Keep the original three appendix responsibilities as compact sections after Part I (or after inline Part II). Fold long tables. Do not create a third Markdown note by default:
+Within the single H1 `附录` / `Appendix`, keep the following unnumbered H2 subsections, after method/component lookup and the notation table. Fold long tables. Do not create a third Markdown note or promote appendix subsections to H1:
 
 - **版本差异 / Version differences:** substantive differences between the version read and the formal published version. Say when no formal version exists, could not be obtained or has no substantive differences; do not fabricate a comparison.
 - **错误与一致性检查 / Errors and consistency checks:** confirmed location, issue, correction, verification and scope. Distinguish missing proof steps from false claims. If nothing was found, state what was actually checked; do not claim independent review unless it happened.
 - **参考文献及其作用 / References and their roles:** cover every reference in the version read. Identify references supplying results/methods/data/code individually; group peripheral references by purpose. Avoid repeating the related-work discussion.
 
-Remove inapplicable scaffold headings instead of filling them with boilerplate. Inventory coverage spans the main note and Part II; keep a single canonical location for each full statement, proof, formula and result table.
+Within the required groups, remove inapplicable component/detail placeholders rather than filling them with boilerplate. For version comparisons or checks that cannot be performed, state the actual availability or scope briefly in their appendix subsection. Inventory coverage spans the main note and Part II; keep a single canonical location for each full statement, proof, formula and result table.
 
 ## Language and English counterparts
 
@@ -66,7 +87,9 @@ Use the selected language consistently for prose, headings, callout explanations
 | 主要实验 | Main experiments |
 | 消融实验与分析 | Ablations and analysis |
 | 讨论、贡献与局限 | Discussion, contributions and limitations |
-| 速查 | At a glance |
+| 方法定位 | Method and component lookup |
+| 符号表 | Notation |
+| 附录 | Appendix |
 | 完整证明与细节 | Complete proofs and details |
 | 我的思考 | My thoughts |
 | 论文原文 | Paper |

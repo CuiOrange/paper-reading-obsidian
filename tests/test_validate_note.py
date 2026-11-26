@@ -52,7 +52,7 @@ class NoteContractTests(unittest.TestCase):
                 self.assertTrue(any("comments" in e or "markers" in e for e in self.check_note(GOOD + "\n" + marker)))
 
     def test_heading_and_chapter_format(self):
-        for heading in ("## 第一部分：理解论文", "## Part I: Understanding", "## 1. Method", "### 2.1 Setup"):
+        for heading in ("# 1. Method", "# 第一部分：理解论文", "## 第一部分：理解论文", "## Part I: Understanding", "## 1. Method", "### 2.1 Setup"):
             self.assertTrue(any("unnumbered" in e for e in self.check_note(GOOD + "\n" + heading)))
         self.assertTrue(any("Use ch" in e for e in self.check_note(GOOD + "\n原文 §III-B。")))
         self.assertTrue(any("page numbers" in e for e in self.check_note(GOOD + "\nch III-B，原文第 3 页。")))
