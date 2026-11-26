@@ -44,22 +44,8 @@ def prose_lines(body: str) -> tuple[list[tuple[int, str]], list[str]]:
     return output, errors
 
 
-def marker_span(body: str, start: str, end: str, label: str, required: bool, errors: list[str]):
-    # Structural markers must occupy their own unindented line, outside code.
-    starts = list(re.finditer(r"^" + re.escape(start) + r"[ \t]*$", body, re.M))
-    ends = list(re.finditer(r"^" + re.escape(end) + r"[ \t]*$", body, re.M))
-    if not starts and not ends and not required:
-        return None
-    if len(starts) != 1 or len(ends) != 1:
-        errors.append(f"{label}: expected exactly one standalone start/end pair")
-        return None
-    if starts[0].start() >= ends[0].start():
-        errors.append(f"{label}: end marker precedes start")
-        return None
-    return starts[0].start(), ends[0].end()
-
-
 def embedded_target_exists(target: str, note: Path, vault: Path) -> bool:
+    target = target.replace("\\|", "|")
     target = target.split("|", 1)[0].split("#", 1)[0].strip().replace("\\", "/")
     if not target:  # A block/heading embed from this same note.
         return True
@@ -84,43 +70,39 @@ def embedded_target_exists(target: str, note: Path, vault: Path) -> bool:
     return False
 
 
+def is_detail_note(note: Path, body: str) -> bool:
+    return note.name in ("附加笔记.md", "Details.md") or bool(re.search(
+        r"(?<!!)\[\[[^]\n]+\|(?:返回主笔记|Return to main note)\]\]", body))
+
+
 def validate_layout(note: Path, frontmatter: str, folder: Path, vault: Path | None,
-                    allow_extra_notes: bool = False) -> list[str]:
-    """Check the new method-folder layout without imposing it on legacy notes."""
+                    allow_extra_notes: bool = False, body: str = "") -> list[str]:
+    """Check filenames and visible return links without adding identity properties."""
     errors: list[str] = []
     folder = folder.resolve()
     if vault is None or not folder.is_dir() or not folder.is_relative_to(vault):
         return ["--paper-folder requires --vault and an existing folder inside it"]
     if note.parent != folder:
         errors.append("Reading notes must sit directly in --paper-folder, without topic subfolders")
-    if scalar(frontmatter, "type") != "paper-detail":
+    if not is_detail_note(note, body):
         if note.name != folder.name + ".md":
             errors.append("Main note filename must match the method folder name")
         return errors
-    if not allow_extra_notes and (note.name != "实验分析.md" or scalar(frontmatter, "topic") != "experiments"):
-        errors.append("Default layout permits only 实验分析.md with topic: experiments beside the main note; keep method, theory and code in the main note")
-    parent = scalar(frontmatter, "parent-note")
-    match = re.fullmatch(r"\[\[([^]\n]+)\]\]", parent)
-    if not match:
-        return errors + ["Child parent-note must be a concrete vault-relative wikilink"]
-    target = match[1].split("|", 1)[0].split("#", 1)[0].strip().replace("\\", "/")
+    if not allow_extra_notes and note.name not in ("附加笔记.md", "Details.md"):
+        errors.append("Default layout permits only 附加笔记.md or Details.md beside the main note")
+    parents = re.findall(r"(?<!!)\[\[([^]\n]+)\|(?:返回主笔记|Return to main note)\]\]", body)
+    if len(parents) != 1:
+        return errors + ["Detail note requires one visible vault-relative 返回主笔记 / Return to main note wikilink"]
+    target = parents[0].split("#", 1)[0].strip().replace("\\", "/")
     if not target or Path(target).is_absolute():
-        return errors + ["Child parent-note must use a vault-relative path"]
+        return errors + ["Detail return link must use a vault-relative path"]
     if not target.endswith(".md"):
         target += ".md"
     parent_path = (vault / target).resolve()
     if parent_path.parent != folder or parent_path.name != folder.name + ".md":
-        return errors + ["Child parent-note must target the method-named main note in the same folder"]
+        return errors + ["Detail return link must target the method-named main note in the same folder"]
     if parent_path == note or not parent_path.is_file():
-        return errors + ["Child parent-note does not resolve to an existing main note"]
-    try:
-        parent_text = parent_path.read_text(encoding="utf-8-sig")
-    except (OSError, UnicodeError) as exc:
-        return errors + [f"Cannot read main note: {exc}"]
-    main_front = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", parent_text, re.S)
-    if (not main_front or scalar(main_front[1], "type") == "paper-detail"
-            or scalar(main_front[1], "zotero-key").lower() in ("", "null", "~")):
-        errors.append("Child parent-note lacks the main note's native ZotLit identity")
+        return errors + ["Detail return link does not resolve to an existing main note"]
     return errors
 
 
@@ -145,16 +127,18 @@ def validate(note: Path, vault: Path | None = None, paper_folder: Path | None = 
         frontmatter, body = "", text
     else:
         frontmatter, body = front[1], text[front.end():]
+    allowed = {"title", "authors", "venue", "code", "year"}
+    keys = re.findall(r"^([^ \t:#][^:\n]*):", frontmatter, re.M)
+    for key in keys:
+        if key not in allowed:
+            errors.append(f"Unexpected property: {key}; keep only title, authors, venue, code and year")
+    if len(keys) != len(set(keys)):
+        errors.append("Duplicate frontmatter property")
+    if scalar(frontmatter, "title").lower() in ("", "null", "~"):
+        errors.append("Note requires a real title property")
+    detail = is_detail_note(note, body)
     if paper_folder is not None:
-        errors.extend(validate_layout(note, frontmatter, paper_folder, vault, allow_extra_notes))
-    detail = scalar(frontmatter, "type") == "paper-detail"
-    if detail:
-        if not scalar(frontmatter, "parent-note"):
-            errors.append("Detail note requires parent-note")
-        if scalar(frontmatter, "zotero-key"):
-            errors.append("Detail note must not duplicate the literature note's zotero-key")
-    elif scalar(frontmatter, "zotero-key").lower() in ("", "null", "~"):
-        errors.append("Literature note requires ZotLit-generated zotero-key")
+        errors.extend(validate_layout(note, frontmatter, paper_folder, vault, allow_extra_notes, body))
 
     lines, fence_errors = prose_lines(body)
     errors.extend(fence_errors)
@@ -162,33 +146,66 @@ def validate(note: Path, vault: Path | None = None, paper_folder: Path | None = 
     retained = {n for n, _ in lines}
     structural_body = "\n".join(line if n in retained else " " * len(line)
                                  for n, line in enumerate(body.splitlines(), 1))
-    if detail and paper_folder is not None and re.search(r"^%%/?zt-managed%%[ \t]*$", structural_body, re.M):
-        errors.append("Child notes must not have a ZotLit managed region")
-    spans = []
-    for label, start, end, required in [
-        ("ZotLit managed region", "%%zt-managed%%", "%%/zt-managed%%", not detail),
-        ("AI region", "<!-- paper-reading:ai:start -->", "<!-- paper-reading:ai:end -->", not detail or paper_folder is not None),
-        ("User region", "<!-- paper-reading:user:start -->", "<!-- paper-reading:user:end -->", not detail or paper_folder is not None),
-    ]:
-        span = marker_span(structural_body, start, end, label, required, errors)
-        if span:
-            spans.append((label, span))
-    for i, (label, (start, end)) in enumerate(spans):
-        for other, (other_start, other_end) in spans[i + 1:]:
-            if start < other_end and other_start < end:
-                errors.append(f"Regions overlap: {label} and {other}")
+    if re.search(r"<!--|-->", structural_body):
+        errors.append("HTML comments must not appear in delivered notes")
+    if re.search(r"%%/?zt-managed%%", structural_body):
+        errors.append("ZotLit managed markers must not appear in delivered notes")
+    title_labels = {note.stem.casefold(), scalar(frontmatter, "title").casefold()}
+    for number, line in lines:
+        heading = re.match(r"^#{1,6}\s+(.+?)\s*#*\s*$", line)
+        if heading and heading[1].strip().casefold() in title_labels:
+            errors.append(f"Do not repeat the note name or title as a body heading at line {number}")
+        if "§" in line:
+            errors.append(f"Use ch for original chapter references at body line {number}")
+        if re.match(r"^#{2,6}\s+(?:\d+(?:\.\d+)*[.)、]?\s+|第[一二三四五六七八九十\d]+部分|Part\s+[IVX\d]+\b)", line, re.I):
+            errors.append(f"Use direct unnumbered content headings at body line {number}")
+        if re.search(r"\bch\s+[IVX\d][^\n]*(?:第\s*\d+\s*页|\b(?:pp?\.|pages?)\s*\d+)", line, re.I):
+            errors.append(f"Do not append page numbers to chapter references at body line {number}")
+
+    if not detail:
+        zotero_links = re.findall(r"(?<!!)\[Zotero\]\((zotero://[^)\s]+)\)", structural_body)
+        article_links = re.findall(r"(?<!!)\[(?:论文原文|Paper)\]\((https?://[^)\s]+)\)", structural_body)
+        if len(zotero_links) != 1 or len(re.findall(r"zotero://", structural_body)) != 1:
+            errors.append("Main note requires exactly one body [Zotero](zotero://...) link")
+        if len(article_links) != 1:
+            errors.append("Main note requires exactly one body [论文原文](https://...) or [Paper](https://...) link")
+        elif structural_body.count(article_links[0]) != 1:
+            errors.append("Article URL must appear only once in the body")
+    elif re.search(r"zotero://|\[(?:论文原文|Paper)\]\(", structural_body):
+        errors.append("Detail note must inherit source links from the main note instead of duplicating them")
 
     display_open = None
     for number, line in lines:
         delimiters = len(re.findall(r"(?<!\\)\$\$", line))
         if delimiters % 2:
             display_open = None if display_open is not None else number
-        if re.search(r"{{.*?}}|{%.*?%}|\\FILL\{|精读内容尚未生成", line):
+        if re.search(r"{{.*?}}|{%.*?%}|\\FILL\{|精读内容尚未生成|Reading not generated yet", line):
             errors.append(f"Unresolved template/scaffold at body line {number}")
         if vault:
             for target in re.findall(r"!\[\[([^\]\n]+)\]\]", line):
                 if not embedded_target_exists(target, note, vault):
                     errors.append(f"Missing, ambiguous or nonportable embed at body line {number}: {target}")
+    clean_lines = [re.sub(r"^(?:[ \t]*>[ \t]?)+", "", x) for x in body.splitlines()]
+    def paragraph_line(value: str) -> bool:
+        value = value.strip()
+        return bool(value) and not re.match(r"^(?:#|\||`|~|>|\$\$|[-*+]\s|\d+[.)]\s)", value)
+    math_open = False
+    for number, line in lines:
+        if line.strip() == "$$":
+            index = number - 1
+            if not math_open and index > 0 and not clean_lines[index - 1].strip():
+                before = index - 1
+                while before >= 0 and not clean_lines[before].strip():
+                    before -= 1
+                if before >= 0 and paragraph_line(clean_lines[before]):
+                    errors.append(f"Remove empty lines between prose and display math at body line {number}")
+            elif math_open and index + 1 < len(clean_lines) and not clean_lines[index + 1].strip():
+                after = index + 1
+                while after < len(clean_lines) and not clean_lines[after].strip():
+                    after += 1
+                if after < len(clean_lines) and paragraph_line(clean_lines[after]):
+                    errors.append(f"Remove empty lines between display math and prose at body line {number}")
+            math_open = not math_open
     if display_open is not None:
         errors.append(f"Unclosed display-math delimiter starting at body line {display_open}")
     return errors

@@ -2,15 +2,14 @@
 
 ## Folder layout and naming
 
-One paper has one folder directly under the configured literature root. The main file and folder use the same paper name. The default structure has one self-contained main note and, when useful, one sibling experiment note. Figures and verification scripts use support directories; reading notes have no topic subfolders.
+One paper has one folder directly under the configured literature root. The main file and folder use the same paper name. All of Part I and the explainer appendices stay in the main note. Part II can be inline or in one optional sibling detail note in the output language. Only image attachments use a support directory inside the paper folder. Verification scripts and outputs live temporarily outside the vault; reading notes have no topic subfolders.
 
 ```text
 Papers/
 └── METHOD/
-    ├── METHOD.md             background, setup, full method, proofs/code and limitations
-    ├── 实验分析.md           optional: settings, detailed results and ablations
-    ├── _assets/              figures and crops, not reading notes
-    └── checks/               retained independent numerical scripts
+    ├── METHOD.md             Part I and explainer appendices; only essential bibliographic properties
+    ├── 附加笔记.md           optional: Part II, complete proofs and full details
+    └── images/              original figures, crops and explanatory diagrams
 ```
 
 `METHOD` is an illustrative name, not a template variable or real method. In actual notes, use the following naming order:
@@ -21,73 +20,83 @@ Papers/
 
 Sanitize filesystem-invalid characters, reserved names and trailing spaces/dots consistently in both the folder and main filename. Preserve the original method spelling in metadata/text. Before creation, look up library + item identity across existing notes. If the same paper exists, resume it; an alias, version or name change does not create a new folder.
 
-If a different paper already owns the name, disambiguate the new folder/main basename using the publication year; if necessary append library and item identity. For example, `METHOD (2026-<library>-<key>)`. Never merge same-name papers or overwrite existing content. Store the resolved `paper_name` separately from the original `method_name`; omit `method_name` when no author-named method exists.
+If a different paper already owns the name, disambiguate the new folder/main basename using the publication year; if necessary append library and item identity. For example, `METHOD (2026-<library>-<key>)`. Never merge same-name papers or overwrite existing content. Store the resolved paper name and original method name, when needed, in the external checkpoint or prose rather than additional note properties.
 
-The main file is the only ZotLit literature note and the complete conceptual reading. Include bibliographic/PDF access, background and prior gaps, problem setup, the full method, necessary theory and explanatory code, limitations and applicable boundaries, plus the key empirical findings needed to assess the method. It must stand on its own rather than act as a navigation stub. Long proofs/code use local collapsible blocks. If an experiment note exists, link to it for settings, detailed tables/results, ablations and supplementary experiments. Use full vault-relative links in both directions because `实验分析.md` recurs across methods. Link only to an actual file.
+The main file is the only ZotLit literature note. Its properties hold only essential bibliography; its body has the single Zotero/article source line. Its body contains all of Part I as defined in `reading-guide.md`, including main experiments and substantive ablations, followed by compact explainer appendices. It is a complete conceptual reading, not a navigation stub. Part II may follow inline or live in `附加笔记.md`; use collapsible blocks for long passages. Use full vault-relative links in both directions, with heading/block targets for the statement-to-proof route. Link only to files actually created.
 
-Use `type: paper-detail`, `topic: experiments`, and `parent-note: "[[Papers/METHOD/METHOD]]"` in the experiment note. Replace the shown path with the actual resolved path. This note has no native `zotero-key`; its parent supplies Zotero access and identity. A short header should visibly link back to the main note as well.
+Identify `附加笔记.md` (English: `Details.md`) by its filename and visible return link to `[[Papers/METHOD/METHOD]]` (replace with the actual vault-relative path). Do not add type, topic, parent-note or Zotero properties. Organize its body as Part II, not as a second general introduction.
 
-For new papers, start with the main note. Add `实验分析.md` only when experimental details warrant a separate file; otherwise keep them in the main note. Do not create a separate `方法理解.md`, `理论推导.md` or `代码解读.md` by default. Split into additional topics only at the user's explicit request. Full-text extracts and work records live in work state, not as extra reading notes scattered through the vault.
+For new papers, start with the main note. Create `附加笔记.md` only when separating Part II helps reading. Otherwise retain all applicable Part II content inline. Do not create separate `方法理解.md`, `实验分析.md`, `理论推导.md` or `代码解读.md` by default. Additional topic files require an explicit user request. Full-text extracts and work records remain in work state.
 
-When reorganizing an existing paper is requested, inventory its main/child files and manual edits, plan collision-free moves, perform supported Obsidian moves, repair affected internal links and checkpoint paths, then verify ZotLit lookup. Do not merge or delete existing content just to fit the new outline. Changing this skill alone does not move existing vault files.
+When reorganizing an existing paper is requested, inventory its main/child files and manual edits, plan collision-free moves, perform supported Obsidian moves, repair affected internal links and checkpoint paths, then verify the saved identity mapping and body Zotero link. Do not merge or delete existing content just to fit the new outline. Changing this skill alone does not move existing vault files.
 
-## Identity and properties
+Do not generate `zotero_notes/` (including at the vault root) or a separate exported Markdown file for each Zotero note/annotation. Zotero remains the owner of the originals. Read them without exporting child-note files and integrate relevant quotations or observations into the existing main/detail note with attribution. Annotation image copies used in the note belong in its shared `images/`. Do not call automatic bulk/child-note export commands or template helpers that create a note-export directory. If an existing integration cannot avoid creating that directory, use a read-only retrieval path for the annotations and update the already resolved paper note instead. Existing user files are not deleted merely by changing this rule.
 
-Keep ZotLit's system-managed frontmatter exactly as produced by the installed release. In particular, retain `zotero-key`; group-library values may encode library identity. Do not replace it with a homemade `zotero_key`. Store explicit library identity and attachment key separately when needed for external tooling.
+## Minimal properties and source links
 
-Reuse template properties. Useful additional unmanaged properties, configured to avoid plugin overwrite, include:
+Final frontmatter has only these five allowed keys, in this order when available:
 
 ```yaml
-type: literature-note
-cssclasses:
-  - paper-reading
-reading_status: queued
-verification_status: pending
+title: "Original paper title"
+authors:
+  - "Author name"
+venue: "arXiv"
+code: "https://verified-author-repository"
+year: 2026
 ```
 
-Use actual values for `paper_version`, DOI/arXiv ID, categories/tags, dates, repository/commit and attachment identity when known; omit unknown facts. Keep native bibliography fields typed through the plugin where possible. Do not construct YAML by injecting unescaped paper titles or author names into quoted strings.
+This is a schema example, not content to copy literally. Use the actual conference/journal name, or `arXiv` for an arXiv-only preprint; do not invent a venue. Keep author names as a list. Use the actual publication year, or the preprint year when no formal publication is verified. Omit unknown values, including `code` if no author repository is verified; do not fill placeholders. The title is required. Reuse these essential fields in the optional detail note only when useful; it can use title alone.
 
-`reading_status`: `queued`, `reading`, `partial`, `complete`.
-`verification_status`: `pending`, `partial`, `checked`, `blocked`.
-`checked` means the documented planned checks completed, not that every scientific claim is proven. Never set completion from file existence alone.
+Remove all Zotero properties (`zotero-key`, library/item/attachment identifiers, `citekey`, `collections`, Zotero URLs) and auxiliary workflow properties (`type`, `topic`, `parent-note`, reading/verification statuses, dates, reading routes, prerequisites, duplicate titles/method names, DOI/arXiv identifiers, and extra URL fields). Do not insert comments or hidden YAML keys to retain them. Do not add CSS properties by default. Keep source/version details in the relevant body discussion or external checkpoint instead.
 
-For detail notes use `type: paper-detail` and a real `parent-note` wikilink. The parent literature note is the single canonical ZotLit literature note; do not duplicate its native `zotero-key` into detail-note metadata unless the installed plugin explicitly supports that use without indexing duplicates.
+After the opening TL;DR in the main note, put one short source line (`Paper` replaces `论文原文` in English):
 
-## Region ownership
+```markdown
+[Zotero](zotero://select/library/items/VERIFIED_KEY) · [论文原文](https://verified-article-page)
+```
 
-The following plugin region belongs to the main note only. Main and child notes both have distinct AI and user areas; children omit a ZotLit managed region and carry only their parent link. The same manual-edit preservation rules apply to every file.
+Replace both example targets with verified values; use the actual personal/group-library URI. Choose one authoritative article page (preferably version-specific when available), or the actual PDF when no article page is available. Do not also add PDF, DOI, arXiv or repeated article-page URLs elsewhere in the note. Source attributions later use `ch` section references or equation/figure identifiers, with no page numbers attached to chapter references and internal links to the single source line or relevant explanation. The optional detail note uses a visible, full vault-relative return link to the main note and inherits these two source links rather than duplicating them. Do not keep its parent link in frontmatter.
 
-The bundled note asset places three regions in one file:
+Verify a newly created ZotLit shell against the real Zotero record before removing plugin fields. Preserve the item/library/attachment identity, source version, current main/detail paths and any necessary update baseline in the compact external checkpoint. On future reads, match that record and the main body jump link to locate the existing note. Treat its Zotero association as a verified link, not a guarantee of native plugin indexing: deleting `zotero-key` may prevent ZotLit lookup and ordinary refresh. Do not invoke a create/refresh/metadata operation that duplicates the note or re-adds unwanted fields. Use supported Obsidian edits against the resolved file; do not change global plugin settings merely to enforce this note schema.
 
-1. ZotLit's content render: the plugin owns the native managed region (`%%zt-managed%%` … `%%/zt-managed%%` in the verified 2.x release). It may regenerate imported notes/annotations.
-2. `<!-- paper-reading:ai:start -->` … `<!-- paper-reading:ai:end -->`: AI explanations, outside the native managed region.
-3. `<!-- paper-reading:user:start -->` … `<!-- paper-reading:user:end -->`: user-owned thinking, never filled with invented first-person judgments.
+## Visible content and preservation
 
-Use HTML comments for skill ownership and the plugin's own Obsidian comments for its managed region; these are distinct contracts. Do not nest them. Verify actual generated output before depending on it. Do not insert native managed markers manually into a content template already wrapped by ZotLit.
+Delivered notes contain no HTML comments, no `paper-reading:*` ownership markers, and no ZotLit managed delimiters (neither the opening nor closing line). Do not place hidden identifiers in the body or substitute another hidden marker. Preserve useful imported annotations as ordinary visible Markdown with attribution. The bundled note template deliberately does not render the named `content` template, since the plugin can wrap it in managed markers.
 
-Before editing, read the whole note and save the previous AI-region snapshot/hash in work state. Compare against the last generated snapshot when available. If the current region differs, preserve manual changes with a targeted merge; absent a baseline, avoid whole-region replacement. Region markers do not imply ownership of every future user edit.
+For a new note, verify the real ZotLit creation and identity first, then remove plugin marker lines while retaining their enclosed content; also apply the minimal property schema. For an explicitly requested revision of an old note, strip only ownership comments/delimiter lines and preserve the enclosed text. Never run a regex rewrite across original program snippets or quotations as incidental formatting cleanup; use targeted edits.
 
-An ordinary ZotLit update preserves outside text in the verified version. Its overwrite operation can replace the body and must not be used for routine refreshes. Frontmatter updates have separate field ownership and merge strategies; placing text outside the managed region alone does not protect managed YAML properties.
+Before an update, read the complete current note. Keep the last generated baseline, user-owned passages/sections and integration mapping in the compact external checkpoint when needed. Compare actual content with that baseline and merge changes. Without a baseline, make targeted additions/revisions rather than assuming the entire note is generated. Preserve “我的思考” / “My thoughts” as an ordinary visible user section and never invent the user's first-person judgments. Do not invoke ZotLit refresh/overwrite/metadata commands that re-add markers, properties or duplicates after cleanup.
 
 ## Appearance and navigation
 
+The main note starts with properties, then immediately the expanded TL;DR and the single source-link line. Keep the paper title in the filename/title property; do not repeat the note name, method name or title property as an extra body heading. The same rule applies to the optional detail note. Put content sections directly at H2, without a “Part I / 第一部分” wrapper or heading numbers. Detail notes likewise use unnumbered headings and a visible return link. Keep source equation/theorem/figure numbering. Do not add HTML comments or managed delimiters.
+
 - Use native `abstract`, `info`, `tip`, `example`, `warning`, `question` and `note` callouts with explicit titles such as “原文结论” or “补充推导”. Meaning/attribution must be readable without colors.
+- Keep display formulas adjacent to prose without empty lines, while retaining necessary heading/list/table spacing. Arrange comparable tall figures in a two- or three-column Markdown image row with captions in the next data row; see `reading-guide.md`.
 - Keep ordinary narrative as paragraphs. Fold long proofs/code with `[!info]-` or `[!example]-`. Every line of a callout, including blank lines, code fences and math fences, needs a `>` prefix.
 - Use headings, existing wikilinks and stable block IDs for lookup. Avoid ambiguous duplicate filenames by linking vault-relative paths.
-- Store original figure/crop assets inside the vault with portable relative links, grouped by stable paper identity. A Zotero reader URI points to the actual verified library/attachment; do not fabricate page parameters.
+- Store all note image attachments (original figures, PDF crops, annotation images and explanatory diagrams) in `<literature-root>/<paper-name>/images/`, a sibling directory of `<paper-name>.md` and optional `附加笔记.md`. Create it when the first image is saved; both notes share it. Use descriptive, collision-safe filenames such as `fig-02-pipeline.png` and reuse an existing image rather than creating a duplicate. Embed with portable vault-relative wikilinks such as `![[Papers/METHOD/images/fig-02-pipeline.png]]` (replace the example path), or standard Markdown relative links such as `![方法流程](images/fig-02-pipeline.png)`. Retain source/figure/page attribution. Do not rely on temporary paths, absolute filesystem paths, external hotlinks or a global attachment folder for newly added note images. Keep bibliographic PDFs in Zotero; this rule governs the note's image copies. A Zotero reader URI points to the actual verified library/attachment; do not fabricate page parameters.
 - Use `$...$` and `$$...$$` for Obsidian files. Chat formulas continue to follow user-specific instructions. Do not rely on CSS to repair broken math.
 - Use Mermaid for useful method/dependency diagrams, Markdown tables for comparisons, and task lists for concrete questions. Additional plugins, CSS and concept-note creation are optional.
 - `assets/paper-note.css` is scoped to `.paper-reading`. Add that CSS class only if the style is enabled or desired. Do not alter unrelated note appearance or install third-party plugins by default.
 
 ## Work state
 
-Use a configured local folder, e.g. `<vault>/.paper-reading/work/<library>-<parent-key>/`. Before a key exists use a stable DOI/arXiv-derived token; migrate state once resolved. Keep work state and private snapshots out of a published skill repository.
+For a long or interrupted reading, reuse one compact local checkpoint outside the paper folder, e.g. `<vault>/.paper-reading/work/<library>-<parent-key>/state.json`. Before a key exists use a stable DOI/arXiv-derived token. Consolidate identity, coverage inventory, outline, issues, stage state and any previous generated-content baseline needed for preserving edits in that checkpoint rather than separate Markdown inventories, reports or log files. Do not persist executable checks or raw check outputs there. Keep private state out of a published skill repository.
 
-Keep an inventory, outline with section statuses, issues, independently written checks and a compact stage record. A useful stage record includes source URL/version, library/item/attachment identity, note path, code commit, per-stage status and any retryable reason. Stage status is `pending`, `running`, `complete` or `blocked`. The record itself is an account of observations, not a simulated tool outcome.
+Keep the coverage inventory, outline with section statuses, issues and compact stage record together in the checkpoint when one is needed. A useful stage record includes source URL/version, library/item/attachment identity, note path, code commit, per-stage status and any retryable reason. Stage status is `pending`, `running`, `complete` or `blocked`. The record itself is an account of observations, not a simulated tool outcome.
 
-Stages: identity, collection, PDF acquisition, fulltext reading, ZotLit shell, analysis, validation. Checkpoint after actual transitions. Resume by checking artifacts and identities, then perform missing work. After a source-version change, update dependent sections and validation. Keep check scripts referenced by the final note; do not delete the only evidence of verification.
+Stages: identity, collection, PDF acquisition, fulltext reading, ZotLit shell, analysis, validation. Checkpoint after actual transitions. Resume by checking artifacts and identities, then perform missing work. After a source-version change, update dependent sections and validation. Before removing temporary checks, retain the meaningful verification facts in the note or checkpoint: what was tested, inputs/seed where relevant, method, actual result and scope. Avoid a standalone verification document or links to temporary scripts/results.
 
 Complete collection requires the real Zotero item, collection and PDF. Complete shell creation requires a real plugin-created linked note. Complete reading requires coverage of the body and appendices (across main/detail notes). Complete validation requires the checks actually reported, with UI rendering separately recorded as performed or untested. Blocked stages leave downstream stages incomplete.
+
+## Temporary checks and cleanup
+
+Generated check scripts, a generated `checks/` directory, raw outputs, screenshots used only for QA, and validation logs belong in a task-owned system temporary directory outside the vault and installed skill. Use the system temp API, e.g. `tempfile.TemporaryDirectory(prefix="paper-reading-")`, with `checks/` beneath it if useful. Do not hardcode one platform's temp path, use the paper folder as scratch space or copy checks into the delivered notes.
+
+Execute the check, capture its outcome, and write only the essential verification facts into an existing note or checkpoint. Then remove its scripts, outputs and owned temporary directory in `finally` (or the context manager's exit), including when a check fails. Record a failure and the remaining uncertainty before cleanup; recreate a check when retrying instead of retaining its executable files. If interruption prevents cleanup, remove only this task's identified temporary directory on resume. Never clear the system temp root or someone else's files.
+
+No finished note may link to a deleted script, output JSON or screenshot. Cite the source location and describe the check's inputs, method, outcome and limits in prose. Keep images actually used in the note in `images/`; only QA-only screenshots are temporary. The reusable `scripts/validate_note.py` shipped with this skill stays in the skill package and runs read-only; it is not a per-paper generated check to delete.
 
 ## Structural validation
 
@@ -99,4 +108,4 @@ python3 /absolute/path/to/skill/scripts/validate_note.py \
   --paper-folder /absolute/path/to/vault/Papers/METHOD
 ```
 
-The checker reads only: ownership/managed marker pairing and separation, parent identity, code-fence closure, display-math fence closure, unresolved template placeholders and existence of local wikilink embeds (including cross-platform relative paths). With `--paper-folder`, it also checks that the note and its main parent share that folder, that the main filename matches the folder name, and that a child points to an existing main note with native identity. By default, a child must be named `实验分析.md` with `topic: experiments`. Use `--allow-extra-notes` only for an explicitly user-requested additional topic split; it retains the same folder, parent identity and region checks. The checker does not check whether the chosen method name is scientifically appropriate or whether the main note explains the method completely; review those against the source. It does not fully parse YAML, Markdown or LaTeX, resolve every hyperlink, render the note, check factual coverage or verify citations. Read its diagnostics and manually check those remaining items. Do not describe a passing result as scientific validation.
+The checker reads only: absence of hidden markers, unnumbered direct headings, compact display-math spacing, minimal property keys, source-link counts, visible parent link, code-fence closure, display-math fence closure, unresolved template placeholders and existence of local wikilink embeds (including cross-platform relative paths). With `--paper-folder`, it also checks that the note and its main parent share that folder, that the main filename matches the folder name, and that a child visibly links to the existing main note. By default, a child must be named `附加笔记.md` or `Details.md`, with its parent expressed only as a visible return link. Use `--allow-extra-notes` only for an explicitly user-requested additional topic split; it retains the same folder, visible parent-link and formatting checks. The checker does not check whether the chosen method name is scientifically appropriate or whether the main note explains the method completely; review those against the source. It does not fully parse YAML, Markdown or LaTeX, resolve every hyperlink, render the note, check factual coverage or verify citations. Read its diagnostics and manually check those remaining items. Do not describe a passing result as scientific validation.

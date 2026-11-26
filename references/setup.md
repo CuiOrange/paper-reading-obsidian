@@ -21,13 +21,12 @@ Example configuration shape (replace explanatory values with real discovered one
     "fallback_collection_key": "verified existing collection key"
   },
   "paper_layout": "method-folder",
-  "paper_assets_subfolder": "_assets",
-  "paper_checks_subfolder": "checks",
+  "paper_assets_subfolder": "images",
   "work_folder": ".paper-reading/work"
 }
 ```
 
-Use actual collection keys plus human-readable paths. Every paper folder lives directly under `literature_folder`; Zotero classification remains in collections, properties and indexes. Ignore an old collection-to-note-folder mapping for new notes under this layout; do not migrate existing notes without checking their identity and links. If no fallback collection exists, resolve it once during setup. Never infer a remote machine's paths from this machine.
+Use actual collection keys plus human-readable paths. Every paper folder lives directly under `literature_folder`; Zotero classification stays in Zotero collections; keep any workflow classification outside note properties. Ignore an old collection-to-note-folder mapping for new notes under this layout; do not migrate existing notes without checking their identity and links. If no fallback collection exists, resolve it once during setup. Never infer a remote machine's paths from this machine. Generated checks use a task-owned system temporary directory with cleanup after execution; ignore a legacy `paper_checks_subfolder` setting rather than creating that folder in a paper directory. Do not rewrite user configuration merely to apply this rule.
 
 ## Initial template setup is separate from paper reading
 
@@ -36,19 +35,22 @@ Installation of this skill does not authorize replacing templates in an existing
 - Inspect and back up only files/settings being changed; show the intended target and changes.
 - Preserve custom fields and active user workflows. Prefer a separate selectable template/profile if supported.
 - `assets/zotlit/` targets the file-based Liquid templates verified against ZotLit 2.1.4. Other releases may use profile documents or different contracts: adapt using installed defaults and official documentation, not by blindly copying filenames. Do not force a plugin upgrade.
-- Preview a real item's template data. The bundled note template renders the named `content` template; in the verified file-based implementation, ZotLit wraps the content render in its managed-region markers. Do not also hardcode those markers in the content asset.
-- Resolve the verified method name from the actual paper, not a guessed ZotLit field. The bundled filename template is only a bootstrap fallback because metadata need not contain the method name. Use a supported per-note destination or Obsidian rename/move to place the plugin-created note at `<literature-root>/<paper-name>/<paper-name>.md`; do not globally switch the output folder for every paper. Preserve native identity, update links and verify that ZotLit subsequently locates the same file rather than creating a duplicate. Do not overwrite bibliographic titles/citekeys or inject an invented `zt.methodName`.
-- Native system identity/frontmatter belongs to ZotLit. Configure typed fields through its actual frontmatter system; do not handwrite a guessed item key into template YAML. Retain system keys, including group-library identity.
-- Create one sample note in an agreed scratch location. Refresh it through the ordinary update operation and verify that AI and personal sentinel text outside the managed region survives. Inspect formulas, nested code callouts and images in Obsidian. Remove only scratch artifacts created by this check when appropriate.
+- Preview a real item with the template for the selected output language. The bundled note templates do not render the named `content` template, because that operation may inject ZotLit managed delimiters. After verifying native creation, remove any generated HTML ownership comments or managed-marker lines while keeping imported text visible. Do not globally replace active templates or settings during a reading request.
+- Resolve the verified method name from the paper. Place the plugin-created shell at `<literature-root>/<paper-name>/<paper-name>.md` through supported Obsidian operations. Verify and save the real item identity externally before trimming properties. After native keys are removed, locate updates through the saved mapping and body link; do not assume plugin lookup still works.
+- Final note properties follow the five-field schema in `note-contract.md`. Remove Zotero and workflow keys after verifying the initial shell; keep only one Zotero jump link and one article link in the main body. Retain the real identity in the compact external checkpoint and do not restore native keys during updates.
+- Preview the minimal properties and body source line with a real item. Keep essential bibliographic facts only, omit unknowns, and do not replace global template/frontmatter settings without a setup request.
+- When setup is requested, create one scratch note, verify source links, property cleanup and preservation of generated/user text without hidden markers, and inspect formulas, callouts and images. Do not run plugin refresh after final property/marker cleanup unless the installed integration demonstrably preserves that format. Remove only scratch artifacts created by this check.
 - Enable optional CSS only if requested; keep the existing theme.
+
+Do not enable automatic Zotero child-note export or invoke bulk/child-note import commands that generate `zotero_notes/`. Inspect the current export behavior before importing notes. Use read-only note/annotation retrieval and write relevant content into the selected paper notes; do not alter global plugin settings during ordinary reading.
 
 ## Integrations and evidence of success
 
 | Operation | Evidence required |
 | --- | --- |
 | Zotero ingestion | Read back parent item, exact library, collection membership and PDF attachment |
-| ZotLit note creation | Operation outcome plus existing file with native `zotero-key` and expected source identity |
-| Note update | Diff/readback preserving managed and user-owned regions |
+| ZotLit note creation | Observed creation outcome and source identity before cleanup; afterward verify the external mapping, minimal properties, marker-free content and body jump link |
+| Note update | Diff/readback preserving user edits and imported visible content, without adding hidden delimiters |
 | PDF acquisition | Actual readable file and its source/version |
 | Rendering | Observed Obsidian rendering, or explicitly untested |
 

@@ -1,14 +1,7 @@
-{% if zt.notes.size > 0 %}
-## Zotero 笔记
-
-{% for note in zt.notes %}
-- {{ note.noteLink }}
-{% endfor %}
-{% endif %}
-{% if zt.annotations.size > 0 %}
-## Zotero 批注
-
-{% for annotation in zt.annotations %}
-{% render "annotation" with annotation as zt %}
-{% endfor %}
-{% endif %}
+{% comment %}
+No automatic child-note export. Do not call note.noteLink or other export helpers
+that create zotero_notes/ or per-annotation Markdown files. Read relevant Zotero
+notes and annotations through a supported read-only interface and incorporate
+their attributed content into the existing main/detail note. Store used image
+copies in the paper's images/ folder. This template deliberately renders no text.
+{% endcomment %}
