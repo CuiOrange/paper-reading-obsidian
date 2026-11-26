@@ -36,6 +36,24 @@ ln -s /absolute/path/to/paper-reading-obsidian ~/.codex/skills/paper-reading-obs
 
 默认写中文。Obsidian 文件中的公式使用 `$...$` 和 `$$...$$`；聊天中的公式遵循用户指令。论文主线、完整证明和代码分层组织，长内容可折叠。作者论断、补充推导和个人思考分别标明。
 
+## 论文笔记结构
+
+每篇论文使用一个方法名文件夹，主文件同名；实验详解按需放在同一层的第二个文件中：
+
+```text
+Papers/方法名/
+├── 方法名.md       # 背景、问题设定、完整方法、必要推导与代码、缺陷
+├── 实验分析.md     # 按需：实验设置、详细结果、消融分析
+├── _assets/
+└── checks/
+```
+
+主笔记由 ZotLit 创建，在一个文件里完整介绍背景、研究问题、方法和缺陷，包括理解方法所需的公式、推导和带注释代码。较长的推导与代码使用折叠 callout，放在相关方法旁。主笔记保留关键实验结论及其含义；实验设置、详细结果、表格和消融分析可以放入同目录的 `实验分析.md`，两者使用完整仓库相对路径互链。没有必要拆分实验时，只生成主笔记。默认不另建“方法理解”“理论推导”或“代码解读”文件；用户明确要求时再拆分。Zotero 分类保留在 Collection、属性和索引中，不为分类复制多套文件。
+
+优先使用作者实际给出的方法/框架名；没有方法名时采用简短研究对象或短标题，不杜撰缩写。不同论文方法名相同则加年份，必要时再加条目身份；同一论文再次处理时复用原目录。插件默认文件名只是创建时的起点，实际通过受支持的移动/重命名落实最终路径，并核对 ZotLit 后续仍定位到同一笔记。
+
+只修改 skill 不会移动既有笔记或替换当前启用的模板。
+
 ## 目录
 
 - `SKILL.md`：流程入口与关键约束。
@@ -50,10 +68,11 @@ ln -s /absolute/path/to/paper-reading-obsidian ~/.codex/skills/paper-reading-obs
 ## 检查笔记
 
 ```bash
-python3 scripts/validate_note.py /absolute/path/to/note.md --vault /absolute/path/to/vault
+python3 scripts/validate_note.py /absolute/path/to/note.md --vault /absolute/path/to/vault \
+  --paper-folder /absolute/path/to/vault/Papers/METHOD
 ```
 
-脚本检查区域标记、必要身份、围栏闭合、模板残留及本地嵌入目标。它不完整解析 YAML/LaTeX，不模拟 ZotLit，也不代替 Obsidian 渲染和原文核验。
+脚本检查区域标记、必要身份、围栏闭合、模板残留及本地嵌入目标。指定 `--paper-folder` 时，默认只接受方法名主笔记和 `topic: experiments` 的 `实验分析.md`；只有用户明确要求额外拆分时才使用 `--allow-extra-notes`。主笔记是否完整解释方法仍须对照原文检查。它不完整解析 YAML/LaTeX，不模拟 ZotLit，也不代替 Obsidian 渲染和原文核验。
 
 ## 发布
 

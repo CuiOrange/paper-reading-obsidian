@@ -18,15 +18,16 @@ Example configuration shape (replace explanatory values with real discovered one
   "template_folder": "ZtTemplates",
   "library": {"type": "user", "id": "verified library id"},
   "classification": {
-    "fallback_collection_key": "verified existing collection key",
-    "collection_to_note_folder": {}
+    "fallback_collection_key": "verified existing collection key"
   },
-  "assets_folder": "Papers/_assets",
+  "paper_layout": "method-folder",
+  "paper_assets_subfolder": "_assets",
+  "paper_checks_subfolder": "checks",
   "work_folder": ".paper-reading/work"
 }
 ```
 
-Use actual collection keys plus human-readable paths. An empty folder mapping means one stable literature folder, classification in note properties and indexes. If no fallback collection exists, resolve it once during setup rather than silently creating a new taxonomy. Never infer a remote machine's paths from this machine.
+Use actual collection keys plus human-readable paths. Every paper folder lives directly under `literature_folder`; Zotero classification remains in collections, properties and indexes. Ignore an old collection-to-note-folder mapping for new notes under this layout; do not migrate existing notes without checking their identity and links. If no fallback collection exists, resolve it once during setup. Never infer a remote machine's paths from this machine.
 
 ## Initial template setup is separate from paper reading
 
@@ -36,6 +37,7 @@ Installation of this skill does not authorize replacing templates in an existing
 - Preserve custom fields and active user workflows. Prefer a separate selectable template/profile if supported.
 - `assets/zotlit/` targets the file-based Liquid templates verified against ZotLit 2.1.4. Other releases may use profile documents or different contracts: adapt using installed defaults and official documentation, not by blindly copying filenames. Do not force a plugin upgrade.
 - Preview a real item's template data. The bundled note template renders the named `content` template; in the verified file-based implementation, ZotLit wraps the content render in its managed-region markers. Do not also hardcode those markers in the content asset.
+- Resolve the verified method name from the actual paper, not a guessed ZotLit field. The bundled filename template is only a bootstrap fallback because metadata need not contain the method name. Use a supported per-note destination or Obsidian rename/move to place the plugin-created note at `<literature-root>/<paper-name>/<paper-name>.md`; do not globally switch the output folder for every paper. Preserve native identity, update links and verify that ZotLit subsequently locates the same file rather than creating a duplicate. Do not overwrite bibliographic titles/citekeys or inject an invented `zt.methodName`.
 - Native system identity/frontmatter belongs to ZotLit. Configure typed fields through its actual frontmatter system; do not handwrite a guessed item key into template YAML. Retain system keys, including group-library identity.
 - Create one sample note in an agreed scratch location. Refresh it through the ordinary update operation and verify that AI and personal sentinel text outside the managed region survives. Inspect formulas, nested code callouts and images in Obsidian. Remove only scratch artifacts created by this check when appropriate.
 - Enable optional CSS only if requested; keep the existing theme.

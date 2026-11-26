@@ -13,15 +13,21 @@
 > [!abstract] 论文主线
 > 精读内容尚未生成。
 
-## 必要背景与问题设定
+## 背景与研究问题
 
-## 方法与理论主线
+## 问题设定与必要知识
 
-## 实验与证据
+## 方法详解
 
-## 完整推导与实现细节
+<!-- Explain the full mechanism here. Keep required derivations and annotated code next to the relevant step; fold long passages. Remove inapplicable headings. -->
 
-## 局限、判断与待核实问题
+## 理论依据与关键推导
+
+## 缺陷与适用边界
+
+## 关键实验结论
+
+<!-- Keep decisive findings and their implications here. Link to 实验分析.md using its actual vault-relative path only if that file exists. -->
 
 ## 速查、来源与关联
 <!-- paper-reading:ai:end -->

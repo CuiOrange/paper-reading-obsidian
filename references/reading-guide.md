@@ -6,17 +6,17 @@ Assume a CS undergraduate foundation: calculus, linear algebra, probability, alg
 
 Read the complete body and supplements. Inventory all substantive definitions, assumptions, results and proofs, algorithms, numbered equations, figures, tables, experimental details and reference roles. Record paper locations and the note section covering each. Number coverage finds omissions; it does not prove understanding or correctness.
 
-Write in your own words following the argument. Avoid sentence-by-sentence paraphrase. Preserve conditions, negative findings and uncertainty. Main notes explain the complete argument; long details can live in linked detail notes sharing the same paper identity (`type: paper-detail`, `parent-note: "[[actual path]]`). Do not multiply copies of the same result.
+Write in your own words following the argument. Avoid sentence-by-sentence paraphrase. Preserve conditions, negative findings and uncertainty. The method-named main note must provide a complete explanation of the background, problem, method and limitations without requiring a second method note. Include essential formulas, derivations and annotated code at the point where they explain the mechanism. Use collapsible blocks to control length. Detailed experimental setup, results, ablations and supplementary tables may go in sibling `实验分析.md` (`type: paper-detail`, `topic: experiments`, with a vault-relative `parent-note` link to the main note). Keep the decisive experimental findings and what they support in the main note. Use one file if a separate experiment note adds no value. Do not create `方法理解.md`, or split theory/code into other files unless the user explicitly requests a different organization. All Markdown notes for this paper stay directly in the same folder. The inventory covers both files; do not duplicate full explanations or result tables.
 
 ## Outline
 
-Adapt headings to the paper, retaining this division of labor:
+Use the following content map as sections, not mandatory files. The main note owns background, setup, the complete method/theoretical argument, necessary proofs and code, and limitations. The optional `实验分析.md` owns experimental details and results; the main note retains a concise account of the evidence needed to assess the method. A reader must be able to understand what the method does, why it works and where it fails by reading the main note alone. Retain this division of labor:
 
 1. **Reading entrance:** concrete problem, existing gap, core idea, main findings and boundaries in a few coherent paragraphs, mostly without formulas. No derivations here.
 2. **Preliminaries and setup:** unfamiliar tools, task, inputs/outputs, assumptions and notation introduced where needed. Omit a standalone preliminaries section if explanations fit locally.
 3. **Method or theoretical argument:** one substantive design/result at a time; explain why needed, what it does, and how it connects. Use exact original result numbers and one plain-language sentence on meaning. Explain non-obvious conditions and what fails without them.
 4. **Experiments and analysis:** what each experiment tests, data/baselines/metrics/settings, results, ablations and supplementary experiments. Explain which claims the evidence supports.
-5. **Full derivations and implementation details:** complete substantive proofs, important omitted steps, full hyperparameters, extra tables and code details. Collapse or link long material instead of omitting it.
+5. **Full derivations and implementation details:** keep complete substantive proofs, important omitted steps and explanatory code in collapsible blocks beside the relevant main-note argument. Put full experimental hyperparameters and extra result tables in the experiment note when one exists. Preserve the details rather than omitting them to shorten the main note.
 6. **Assessment and open questions:** author-stated limitations, source-supported additional assessment and unresolved questions, attributed separately. Leave the personal area for the user.
 7. **Lookup and relations:** result/component and notation tables, genuine links to existing notes, version differences, issue/check records and reference roles. This section introduces no new claims.
 
@@ -37,7 +37,7 @@ Theory papers emphasize theorem dependencies and complete proofs. Method/system 
 
 Use the original figure asset when possible, otherwise a verified PDF crop. Inspect labels, legends and caption context. Add a brief Chinese explanation of what to look at. A simplified redraw supplements the original and is labeled as the note writer's diagram.
 
-Retype numerical tables and algorithms as text. Preserve all results, units and precision; a long table may move to a detail note. Compare transcribed cells with the source, not merely the total set of numbers. Extracted text may lose column order, minus signs or superscripts: verify against the rendered PDF.
+Retype numerical tables and algorithms as text. Preserve all results, units and precision; a long experimental table may move to `实验分析.md`. Compare transcribed cells with the source, not merely the total set of numbers. Extracted text may lose column order, minus signs or superscripts: verify against the rendered PDF.
 
 For each experiment ask what it tests, whether comparisons use matching conditions, and what the result establishes. Record optimizer, learning rate, batch size, epochs, data processing, hardware and evaluation configuration where reported. Separate percentage-point changes from relative percentage gains. Report missing settings as unreported, not inferred.
 
