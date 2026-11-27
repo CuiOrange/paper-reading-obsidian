@@ -95,7 +95,7 @@ Use the selected language consistently for prose, headings, callout explanations
 | 论文原文 | Paper |
 | 返回主笔记 | Return to main note |
 
-In Chinese, introduce each translated method name, specialist term and metric with its exact English original in parentheses: 无损图像压缩（lossless image compression）、分离信源信道编码（separate source-channel coding, SSCC）、峰值信噪比（peak signal-to-noise ratio, PSNR）、结构相似性（structural similarity, SSIM）. Apply this in the abstract translation too. Keep case, punctuation and acronyms faithful to the paper. Repeat the English original in a later independently read section when needed to avoid ambiguity, not mechanically after every occurrence. An original English method/acronym such as DDM-SSCC or DiffuGPT stays unchanged; give its expansion only if verified. English notes use the original terms directly, with an acronym expansion at first use when useful. Keep all math symbols and source labels intact.
+At first use of a term, give its English original: Chinese explanations use “中文译名（English original）”, then consistently use that Chinese translation thereafter. For example, introduce 线性探测（linear probe） once and use 线性探测 subsequently. This applies to translated method names, specialist terms and metrics, including those first introduced in the abstract translation. Keep case, punctuation and acronyms faithful to the paper. An original English method/acronym such as DDM-SSCC or DiffuGPT stays unchanged; give its expansion only if verified. English notes use the original terms directly, with an acronym expansion at first use when useful. Keep all math symbols and source labels intact.
 
 ## Compact typography and figures
 
@@ -121,6 +121,42 @@ Replace the example paths/captions with actual figures and preserve English labe
 - Original numerical values retain their precision. Computed examples are checked by independent scripts in a task-owned system temporary directory, with explicit inputs and seed where relevant. Record the essential setup, result and verification scope in the existing note, then delete the scripts and raw results after execution; do not create persistent `checks/` or check-report files. Follow the cleanup rules in `note-contract.md`. Do not present unexecuted output as observed.
 - Toy examples are optional. Use a small example for an abstract quantity or counterintuitive mechanism; reuse its setup and keep example material sparse. Prefer a pipeline diagram for an ordinary computational pipeline.
 - Check central identities on small instances when feasible, but distinguish this from proof. A verified counterexample can disprove a universal claim; passing instances cannot prove one.
+
+## Algorithm pseudocode with line numbers
+
+When an algorithm helps explain the method, use the line-numbered, ruled MathJax format below inside `$$...$$`. Place it beside the corresponding method/component explanation under the existing hierarchy, not in a new top-level group or file. Use `array{r l}` for right-aligned line numbers and left-aligned statements, nested inside `array{l}` with `\hline` around the title and body. Use `\quad` / `\qquad` for nesting and explicit `end if` / `end for` where applicable. Keep the block adjacent to its explanatory prose without empty lines.
+
+- Transcribe the paper's algorithm faithfully, preserving its original identifier, inputs/outputs, initialization, operation order, conditions, loop scope and termination behavior. If line numbers are added or changed, references to them must clearly mean the note's line numbers rather than the source's.
+- Label independently reconstructed or simplified algorithms as “补充伪代码” / “Explanatory pseudocode”, cite the actual source section/equation and identify meaningful omissions. Use the paper's notation; do not invent a source algorithm number or fill missing implementation details with assumptions.
+- Match the title, input/output labels and explanations to the note language: `算法 / 输入 / 输出` in Chinese, `Algorithm / Input / Output` in English. Control-flow keywords such as `for`, `if`, `break` and `return` may stay in English in either language. Explain unfamiliar keywords once when needed.
+- MathJax does not load full LaTeX algorithm packages through `$$...$$`. Use the array-based syntax here rather than `algorithm`, `algorithmic`, `algorithm2e`, `\State`, `\For`, `\caption` or `\usepackage`. Keep real author-code excerpts in fenced code blocks with the appropriate programming language.
+- Maintain line numbers manually. Split long statements with continuation indentation or explain them in prose; avoid oversized arrays and large paragraphs of comments. Verify rendering in Obsidian when accessible, including nested indentation and line-number alignment.
+
+This self-written gradient-descent example demonstrates formatting only. Replace its title, symbols and operations with the actual paper's algorithm; do not copy its optimization or stopping rule into an unrelated note. Here $f$ is differentiable, $\theta_0$ is the initial parameter, $\eta>0$ is the step size, $T$ is a nonnegative integer update limit and $\varepsilon\geq0$ is the gradient-norm threshold. The loop checks the gradient before updating and returns the initialized parameter even when $T=0$.
+
+```latex
+$$
+\begin{array}{l}
+\hline
+\textbf{Algorithm 1}\quad\text{Gradient Descent} \\
+\hline
+\begin{array}{r l}
+& \textbf{Input: } f,\ \theta_0,\ \eta,\ T,\ \varepsilon \\
+& \textbf{Output: } \theta \\
+1: & \theta \leftarrow \theta_0 \\
+2: & \mathbf{for}\ t=1,\ldots,T\ \mathbf{do} \\
+3: & \quad g \leftarrow \nabla f(\theta) \\
+4: & \quad \mathbf{if}\ \lVert g\rVert_2\leq\varepsilon\ \mathbf{then} \\
+5: & \qquad \mathbf{break} \\
+6: & \quad \mathbf{end\ if} \\
+7: & \quad \theta \leftarrow \theta-\eta g \\
+8: & \mathbf{end\ for} \\
+9: & \mathbf{return}\ \theta
+\end{array} \\
+\hline
+\end{array}
+$$
+```
 
 ## Figures, tables and experiments
 

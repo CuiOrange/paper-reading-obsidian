@@ -75,10 +75,11 @@ English prompt: `Read this paper closely and save English notes in my Obsidian v
 
 - 原文章节引用写作 `ch III-B`、`ch 3.2`，不用章节符号，也不同时标页数。
 - 正文与显示公式之间不留空行；保留标题、列表、表格所需的 Markdown 间距。
+- 算法伪代码默认使用 `$$...$$` 中带行号、横线和缩进的 MathJax 格式，放在对应方法旁；[完整示例与规则](references/reading-guide.md#algorithm-pseudocode-with-line-numbers)。沿用原文算法编号，自行整理的版本标明“补充伪代码”；作者代码仍使用对应编程语言的代码块。
 - 可比较的竖向图用两列或三列表格并排：首行为图片，下一内容行为说明，保留原图编号和可读性。
 - 不使用“第一部分”这一层标题，所有内容标题不加序号；原文公式、图表和定理编号保留。
 - 成品笔记不含 HTML 注释或 ZotLit 管理标记。通过笔记外的快照和定向合并保留用户修改。
-- 中文首次解释方法、专有术语和指标时给出括号内英文原文，例如峰值信噪比（peak signal-to-noise ratio, PSNR）；必要时在独立小节再次给出以消除歧义。
+- 术语首次出现附英文：中文讲解采用“中文译名（English original）”，之后统一使用该译名。
 
 ## 目录
 
@@ -102,6 +103,5 @@ python3 scripts/validate_note.py /absolute/path/to/note.md --vault /absolute/pat
 
 ## 发布
 
-此目录可以作为独立 Git 仓库发布。提交提示词、模板与检查器即可，个人路径配置、凭据、论文 PDF 和私人笔记不进入技能仓库。Zotero/ZotLit 的实际接口因环境而异，应分别记录已经验证和仍待接通的能力。
+此目录作为独立 Git 仓库发布。提交提示词、模板与检查器即可，个人路径配置、凭据、论文 PDF 和私人笔记不进入技能仓库。Zotero/ZotLit 的实际接口因环境而异，应分别记录已经验证和仍待接通的能力。
 
-精读设计参考 [cswjl/paper-explainer](https://github.com/cswjl/paper-explainer)。本项目将其完整覆盖、减少重复、保留核验依据等思路改为 Zotero + Obsidian 流程；不包含其 XeLaTeX 模板或执行脚本。出处与许可见 `THIRD_PARTY_NOTICES.md`。
